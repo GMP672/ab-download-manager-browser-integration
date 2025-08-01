@@ -127,5 +127,18 @@
   },
   "abdm_notification_download_captured_silently": {
     "message": "Download captured silently"
+  },
+  "config_file_type_filter_extensions_list":{
+    "message": "Captured file types extensions"
+  },
+  "config_ignored_urls":{
+    "message": "Ignored URL patterns"
+  },
+  "config_file_type_filter":{
+    "message": "Capture only selected file types"
+  },
+  "config_file_type_filter_description":{
+    "message": "When disabled - all download links will be captured"
   }
+  
 }

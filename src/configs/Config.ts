@@ -56,6 +56,7 @@ export const defaultConfig: Config = {
     closeNewTabIfItWasCaptured: true,
     silentAddDownload: false,
     silentStartDownload: false,
+    fileTypeFilter: true,
 }
 
 export const configKeys: ReadonlyArray<keyof Config> = Object.keys(defaultConfig) as any
@@ -83,6 +84,7 @@ export interface Config {
     silentAddDownload: boolean
     silentStartDownload: boolean
     blacklistedUrls: string[]
+    fileTypeFilter: boolean
 }
 
 export const MIN_ALLOWED_PORT = 1024

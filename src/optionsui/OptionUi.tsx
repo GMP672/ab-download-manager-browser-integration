@@ -77,6 +77,9 @@ class ToolsViewModel extends EventAwareViewModel<ToolsViewModelEvent> implements
 
     @observable
     closeNewTabIfItWasCaptured!: boolean
+    
+    @observable
+    fileTypeFilter!: boolean
 
     setAutoCaptureLinks(value: boolean) {
         Configs.setConfigItem("autoCaptureLinks", value)
@@ -108,6 +111,10 @@ class ToolsViewModel extends EventAwareViewModel<ToolsViewModelEvent> implements
 
     setSendHeaders(value: boolean) {
         Configs.setConfigItem("sendHeaders", value)
+    }
+
+    setFileTypeFilter(value: boolean) {
+        Configs.setConfigItem("fileTypeFilter", value)
     }
 
     testPort() {
@@ -207,6 +214,8 @@ const SettingsSection: React.FC<{ vm: ToolsViewModel }> = observer((props) => {
             <AutoCaptureSection
                 value={vm.autoCaptureLinks}
                 toggle={(v) => vm.setAutoCaptureLinks(v)}
+                fileTypeFilterEnabled={vm.fileTypeFilter}
+                setFileTypeFilter={(v) => vm.setFileTypeFilter(v)}
                 fileTypes={vm.registeredFileTypes}
                 defaultFileTypes={defaultConfig.registeredFileTypes}
                 blacklistedUrls={vm.blacklistedUrls}
@@ -242,7 +251,7 @@ function Divider() {
 function OptionItem(
     props: {
         title: ReactNode,
-        toggle: ReactNode,
+        toggle?: ReactNode,
         description: ReactNode,
         enabled?: boolean,
         className?: string,
@@ -351,6 +360,8 @@ function AutoCaptureSection(
         blacklistedUrls: string[]
         setBlacklistedUrls: (urls: string[]) => void,
         defaultBlacklistedUrls: string[],
+        fileTypeFilterEnabled: boolean,
+        setFileTypeFilter: (v: boolean) => void,
     }
 ) {
     const [fileTypesString, setFileTypesString] = useState<string>("")
@@ -383,18 +394,41 @@ function AutoCaptureSection(
         setUrlsString(props.blacklistedUrls.join("\n"))
     }, [canBeResetBlacklistedUrls]);
 
-    return <OptionItem
-        title={
-            <div>{browser.i18n.getMessage("config_auto_capture_links")}</div>
-        }
-        toggle={
-            <input checked={props.value} onChange={event => props.toggle(event.target.checked)} type="checkbox"
-                   className="checkbox"/>
-        }
-        description={
-            <div className="flex flex-col">
+    return <div>
+        <OptionItem
+            title={
+                <div>{browser.i18n.getMessage("config_auto_capture_links")}</div>
+            }
+            toggle={
+                <input checked={props.value} onChange={event => props.toggle(event.target.checked)} type="checkbox"
+                    className="checkbox"/>
+            }
+            description={
                 <div>{browser.i18n.getMessage("config_auto_capture_links_description")}</div>
-                <div className="mt-2"/>
+            }
+        />
+        <OptionItem
+            title={
+                <div>{browser.i18n.getMessage("config_file_type_filter")}</div>
+            }
+            className="pt-4"
+            toggle={
+                <input checked={props.fileTypeFilterEnabled}
+                        onChange={event => props.setFileTypeFilter(event.target.checked)} type="checkbox"
+                        className="checkbox"/>
+            }
+            description={
+                <div>{browser.i18n.getMessage("config_file_type_filter_description")}</div>
+            }
+        />
+        <OptionItem
+            title={
+                <div>{browser.i18n.getMessage("config_file_type_filter_extensions_list")}</div>
+            }
+            className="px-4 pt-4"
+            enabled={props.fileTypeFilterEnabled}
+            description={
+            <div className="flex flex-col">
                 <AutoGrowingTextarea
                     className="textarea"
                     value={fileTypesString}
@@ -413,9 +447,16 @@ function AutoCaptureSection(
                 }
                 <div className="mt-2"/>
                 <div>{browser.i18n.getMessage("config_auto_capture_links_file_extensions_description")}</div>
-                <div className="mt-3"/>
-                <div>Ignored Url patterns</div>
-                <div className="mt-2"/>
+            </div>
+            }
+        />
+        <OptionItem
+            title={
+                <div>{browser.i18n.getMessage("config_ignored_urls")}</div>
+            }
+            className="pt-4"    
+            description={
+            <div className="flex flex-col">
                 <AutoGrowingTextarea
                     className="textarea"
                     value={urlsString}
@@ -435,8 +476,9 @@ function AutoCaptureSection(
                 <div className="mt-2"/>
                 <div>{browser.i18n.getMessage("config_blacklisted_urls_description")}</div>
             </div>
-        }
-    />
+            }
+        />
+    </div>
 }
 
 function PortSection(

@@ -130,10 +130,12 @@ export abstract class DownloadLinkInterceptor {
             // console.log("capture_error","filename isNull")
             return false
         }
-        const ext = this.getFileExtension(fileName)
-        if (!this.isInRegisteredFileFormats(ext)) {
-            // console.log("capture_error",`extension is not registered`,ext)
-            return false
+        if (Configs.getLatestConfig().fileTypeFilter) {
+            const ext = this.getFileExtension(fileName)
+            if (!this.isInRegisteredFileFormats(ext)) {
+                // console.log("capture_error",`extension is not registered`,ext)
+                return false
+            }
         }
         return {
             fileName: fileName
